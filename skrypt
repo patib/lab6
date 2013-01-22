@@ -1,0 +1,34 @@
+#!/bin/bash
+
+adres=""
+folder=""
+
+echo "Podaj adres strony, z której chcesz pobrać obrazy"
+read adres
+wget -q $adres
+
+echo "Podaj nazwe foleru do które chcesz zapisac obrazy "
+read folder
+mkdir $folder
+cd $folder 
+
+nazwa="../index.html"
+
+while read; do
+
+		dl=${#REPLY}
+		for (( i=0; $i <= dl-3 ; i++ )) ; do
+			if [ "${REPLY:$i:4}" = "<img" ]; 
+			then
+				IFS='"'
+				for el in $REPLY; do
+					if [ "${el: -3}" = "png" -o "${el: -2}" = "pg" -o "${el: -2}" = "eg" -o "${el: -3}" = "gif" ]; 
+					then
+						echo "Pobieranie pliku: $el" 
+						wget -q $el
+					fi
+				done 
+			fi
+		done
+done < $nazwa
+rm $nazwa
